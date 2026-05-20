@@ -1,0 +1,20 @@
+{
+  "tests": [
+    {
+      "name": "POST valid lead",
+      "method": "POST",
+      "path": "/",
+      "body": { "name": "Тест Тестов", "phone": "+79001234567" },
+      "expectedStatus": 200,
+      "expectedBody": { "ok": true },
+      "bodyMatcher": "partial"
+    },
+    {
+      "name": "POST missing phone",
+      "method": "POST",
+      "path": "/",
+      "body": { "name": "Без телефона" },
+      "expectedStatus": 400
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+CREATE TABLE IF NOT EXISTS t_p78702137_day_planning_site.leads (
+  id SERIAL PRIMARY KEY,
+  name TEXT NOT NULL,
+  phone TEXT NOT NULL,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);

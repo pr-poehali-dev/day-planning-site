@@ -1,5 +1,7 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import Icon from "@/components/ui/icon";
+
+const LEADS_URL = "https://functions.poehali.dev/db14518b-e979-40fe-bd90-ecf77e38ef2a";
 
 const PRODUCT_IMG = "https://cdn.poehali.dev/projects/6ffab839-a77a-46ed-82ea-5144b5e3eee4/files/aedf5b04-f404-4b35-9671-3ee87bee3f8b.jpg";
 const BG_IMG = "https://cdn.poehali.dev/projects/6ffab839-a77a-46ed-82ea-5144b5e3eee4/files/120a238a-0fc7-45ed-b5ac-69566a6e1eea.jpg";
@@ -323,6 +325,9 @@ export default function App() {
         </div>
       </section>
 
+      {/* ── LEAD FORM ── */}
+      <LeadForm />
+
       {/* ── CTA BANNER ── */}
       <section className="relative z-10 py-24 px-6 md:px-12 overflow-hidden"
         style={{ background: "linear-gradient(135deg, #f0a8ba 0%, #e8829a 40%, #c4536b 100%)" }}>
@@ -375,5 +380,153 @@ export default function App() {
         </p>
       </footer>
     </div>
+  );
+}
+
+function LeadForm() {
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!name.trim() || !phone.trim()) return;
+    setStatus("loading");
+    try {
+      const res = await fetch(LEADS_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: name.trim(), phone: phone.trim() }),
+      });
+      if (res.ok) {
+        setStatus("success");
+        setName("");
+        setPhone("");
+      } else {
+        setStatus("error");
+      }
+    } catch {
+      setStatus("error");
+    }
+  };
+
+  return (
+    <section className="relative z-10 py-24 px-6 md:px-12 bg-cream overflow-hidden" id="lead-form">
+      {/* Декоративные круги */}
+      <div className="absolute top-0 right-0 w-80 h-80 rounded-full pointer-events-none"
+        style={{ background: "radial-gradient(circle, rgba(232,130,154,0.12), transparent 70%)", transform: "translate(30%, -30%)" }} />
+      <div className="absolute bottom-0 left-0 w-64 h-64 rounded-full pointer-events-none"
+        style={{ background: "radial-gradient(circle, rgba(107,171,124,0.1), transparent 70%)", transform: "translate(-30%, 30%)" }} />
+
+      <div className="relative max-w-2xl mx-auto text-center">
+        {/* Label */}
+        <p className="text-xs font-body font-semibold tracking-widest uppercase mb-3" style={{ color: "#e8829a" }}>
+          Специальное предложение
+        </p>
+
+        <h2 className="font-cormorant font-light leading-tight mb-4"
+          style={{ fontSize: "clamp(2rem, 4vw, 3.2rem)", color: "#3d2b35" }}>
+          Получите скидку&nbsp;10%<br />
+          <em className="not-italic text-shimmer">на первый заказ</em>
+        </h2>
+
+        <p className="font-body text-base leading-relaxed mb-10" style={{ color: "#8d7882" }}>
+          Оставьте имя и телефон — мы пришлём промокод<br className="hidden md:block" />
+          и расскажем об акциях первыми.
+        </p>
+
+        {status === "success" ? (
+          <div className="sakura-card rounded-3xl px-10 py-12 flex flex-col items-center gap-4 animate-scale-in">
+            <div className="w-16 h-16 rounded-full flex items-center justify-center"
+              style={{ background: "linear-gradient(135deg, #e8829a, #c4536b)" }}>
+              <Icon name="Check" size={28} className="text-white" />
+            </div>
+            <h3 className="font-cormorant font-semibold text-2xl" style={{ color: "#3d2b35" }}>
+              Заявка принята! 🌸
+            </h3>
+            <p className="font-body text-sm" style={{ color: "#8d7882" }}>
+              Мы свяжемся с вами в ближайшее время и пришлём промокод.
+            </p>
+          </div>
+        ) : (
+          <form onSubmit={handleSubmit} className="sakura-card rounded-3xl p-8 md:p-10">
+            <div className="grid md:grid-cols-2 gap-4 mb-4">
+              {/* Name */}
+              <div className="relative">
+                <div className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                  <Icon name="User" size={16} style={{ color: "#c8a4b2" }} />
+                </div>
+                <input
+                  type="text"
+                  placeholder="Ваше имя"
+                  value={name}
+                  onChange={e => setName(e.target.value)}
+                  required
+                  className="w-full font-body text-sm rounded-2xl pl-10 pr-4 py-4 outline-none transition-all duration-200"
+                  style={{
+                    background: "rgba(253,240,243,0.7)",
+                    border: "1.5px solid rgba(232,130,154,0.2)",
+                    color: "#3d2b35",
+                  }}
+                  onFocus={e => (e.target.style.borderColor = "rgba(196,83,107,0.5)")}
+                  onBlur={e => (e.target.style.borderColor = "rgba(232,130,154,0.2)")}
+                />
+              </div>
+
+              {/* Phone */}
+              <div className="relative">
+                <div className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                  <Icon name="Phone" size={16} style={{ color: "#c8a4b2" }} />
+                </div>
+                <input
+                  type="tel"
+                  placeholder="+7 (999) 000-00-00"
+                  value={phone}
+                  onChange={e => setPhone(e.target.value)}
+                  required
+                  className="w-full font-body text-sm rounded-2xl pl-10 pr-4 py-4 outline-none transition-all duration-200"
+                  style={{
+                    background: "rgba(253,240,243,0.7)",
+                    border: "1.5px solid rgba(232,130,154,0.2)",
+                    color: "#3d2b35",
+                  }}
+                  onFocus={e => (e.target.style.borderColor = "rgba(196,83,107,0.5)")}
+                  onBlur={e => (e.target.style.borderColor = "rgba(232,130,154,0.2)")}
+                />
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              disabled={status === "loading"}
+              className="btn-sakura w-full py-4 text-base flex items-center justify-center gap-2"
+            >
+              {status === "loading" ? (
+                <>
+                  <Icon name="Loader2" size={18} className="animate-spin" />
+                  Отправляем...
+                </>
+              ) : (
+                <>
+                  <Icon name="Gift" size={18} />
+                  Получить скидку 10%
+                </>
+              )}
+            </button>
+
+            {status === "error" && (
+              <p className="font-body text-sm mt-3 text-center" style={{ color: "#c4536b" }}>
+                Что-то пошло не так. Попробуйте ещё раз.
+              </p>
+            )}
+
+            <p className="font-body text-xs mt-4 text-center" style={{ color: "#b8a4ac" }}>
+              Нажимая кнопку, вы соглашаетесь на обработку персональных данных.
+              Без спама — только скидка и акции.
+            </p>
+          </form>
+        )}
+      </div>
+    </section>
   );
 }
