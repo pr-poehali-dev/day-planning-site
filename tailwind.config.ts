@@ -20,9 +20,8 @@ export default {
 		},
 		extend: {
 			fontFamily: {
-				'golos': ['Golos Text', 'sans-serif'],
-				'montserrat': ['Montserrat', 'sans-serif'],
-				'cormorant': ['Cormorant Garamond', 'Georgia', 'serif'],
+				'plex': ['IBM Plex Sans', 'system-ui', 'sans-serif'],
+				'mono': ['IBM Plex Mono', 'monospace'],
 			},
 			colors: {
 				border: 'hsl(var(--border))',
